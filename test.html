@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date Range Picker</title>
+  <style>
+    .disabled {
+      background-color: #e9ecef;
+      color: #6c757d;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h2>Date Range Picker</h2>
+  <input type="date" id="start-date" />
+  <input type="date" id="end-date" />
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const startDateInput = document.getElementById('start-date');
+      const endDateInput = document.getElementById('end-date');
+      
+      const updateDisabledDates = () => {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        if (startDate && endDate) {
+          const minDate = new Date(startDate);
+          const maxDate = new Date(endDate);
+
+          minDate.setDate(startDate.getDate() - 7);
+          maxDate.setDate(endDate.getDate() + 7);
+
+          // Update disabled attribute for all dates
+          const inputs = document.querySelectorAll('input[type="date"]');
+          inputs.forEach(input => {
+            const dateValue = new Date(input.value);
+            if (dateValue < minDate || dateValue > maxDate) {
+              input.classList.add('disabled');
+            } else {
+              input.classList.remove('disabled');
+            }
+          });
+        }
+      };
+
+      startDateInput.addEventListener('change', updateDisabledDates);
+      endDateInput.addEventListener('change', updateDisabledDates);
+    });
+  </script>
+</body>
+</html>
