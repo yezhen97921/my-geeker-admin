@@ -11,6 +11,7 @@
           </template>
         </el-tab-pane> 
       </el-tabs>
+      <MoreButton></MoreButton>
     </div>
   </div>
 </template>
@@ -23,6 +24,7 @@
   import { useGlobalStore } from '@/stores/modules/global';
   import { useTabsStore } from '@/stores/modules/tabs';
   import { useAuthStore } from '@/stores/modules/auth';
+  import MoreButton from './components/MoreButton.vue';
 
 
   const route = useRoute();
@@ -99,4 +101,6 @@
   };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@import "./index.scss";
+</style>
