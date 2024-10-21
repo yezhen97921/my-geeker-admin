@@ -1,53 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Date Range Picker</title>
-  <style>
-    .disabled {
-      background-color: #e9ecef;
-      color: #6c757d;
-      cursor: not-allowed;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts 动态 Y 轴演示</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        #main {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
 </head>
 <body>
-  <h2>Date Range Picker</h2>
-  <input type="date" id="start-date" />
-  <input type="date" id="end-date" />
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const startDateInput = document.getElementById('start-date');
-      const endDateInput = document.getElementById('end-date');
-      
-      const updateDisabledDates = () => {
-        const startDate = new Date(startDateInput.value);
-        const endDate = new Date(endDateInput.value);
-        if (startDate && endDate) {
-          const minDate = new Date(startDate);
-          const maxDate = new Date(endDate);
+    <div id="main"></div>
 
-          minDate.setDate(startDate.getDate() - 7);
-          maxDate.setDate(endDate.getDate() + 7);
+    <script>
+        // 初始化ECharts实例
+        var myChart = echarts.init(document.getElementById('main'));
 
-          // Update disabled attribute for all dates
-          const inputs = document.querySelectorAll('input[type="date"]');
-          inputs.forEach(input => {
-            const dateValue = new Date(input.value);
-            if (dateValue < minDate || dateValue > maxDate) {
-              input.classList.add('disabled');
-            } else {
-              input.classList.remove('disabled');
-            }
-          });
-        }
-      };
+        // 数据
+        var xData = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        var yData = [120, 200, 150, 80, 70, 110, 130];
 
-      startDateInput.addEventListener('change', updateDisabledDates);
-      endDateInput.addEventListener('change', updateDisabledDates);
-    });
-  </script>
+        // 配置项
+        var option = {
+            xAxis: {
+                type: 'category',
+                data: xData // X轴数据
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    data: yData, // Y轴数据
+                    type: 'line'
+                }
+            ],
+            dataZoom: [
+                {
+                    type: 'slider', // 滑动条控制X轴缩放
+                    start: 0,
+                    end: 100,
+                    xAxisIndex: 0 // 绑定X轴
+                }
+            ]
+        };
+
+        // 初次渲染图表
+        myChart.setOption(option);
+
+        // 监听 dataZoom 事件
+        myChart.on('dataZoom', function (event) {
+            // 计算当前可见的 X 轴索引范围
+            var startIndex = Math.floor((event.start / 100) * xData.length);
+            var endIndex = Math.ceil((event.end / 100) * xData.length);
+
+            // 获取当前显示范围内的 Y 轴数据
+            var visibleData = yData.slice(startIndex, endIndex);
+
+            // 计算当前显示范围内的 Y 轴最大最小值
+            var maxVal = Math.max(...visibleData);
+            var minVal = Math.min(...visibleData);
+
+            // 更新 Y 轴的最大最小值
+            myChart.setOption({
+                yAxis: {
+                    min: minVal, 
+                    max: maxVal
+                }
+            });
+        });
+    </script>
 </body>
 </html>
